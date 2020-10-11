@@ -1,0 +1,12 @@
+*.json
+important.json
+.env
+config.py
+firebase-private-key.json
+firebase-sdk.json
+venv
+
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml
