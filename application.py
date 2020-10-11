@@ -10,6 +10,20 @@ from werkzeug.datastructures import FileStorage
 from PIL import Image #pip3 install Pillow
 from keras.models import model_from_json
 import tensorflow as tf
+from datetime import datetime
+import uuid
+
+from firebase_admin import credentials, firestore, initialize_app
+
+# cred = credentials.Certificate("important.json")
+# firebase_admin.initialize_app(cred)
+# db = firestore.client()
+# interactions = db.collection('interactions')
+
+cred = credentials.Certificate('important.json')
+default_app = initialize_app(cred)
+db = firestore.client()
+firebase_api = db.collection('api')
 
 application = Flask(__name__)
 api = Api(application, version='1.0', title='MNIST Classification', description='CNN for Mnist')
@@ -52,6 +66,14 @@ class CNNPrediction(Resource):
         print(out[0])
         print(np.argmax(out[0]))
         r = np.argmax(out[0])
+
+        log_object = {
+            "filename": image_file.filename,
+            "prediction": int(r),
+            "date": datetime.now().strftime("%m/%d/%y")
+        }
+
+        firebase_api.document(uuid.uuid4().hex).set(log_object)
 
         return {'prediction': str(r)}
 
